@@ -1,0 +1,33 @@
+@model PdfMetadataExtractor.Models.PDFReport
+@{
+    ViewData["Title"] = "PDF Report";
+}
+<h1>PDF Report</h1>
+
+<p><strong>Total Pages:</strong> @Model.TotalPages</p>
+
+<h2>Processed Files:</h2>
+<ul>
+    @foreach (var file in Model.PdfFiles)
+    {
+        <li>
+            <strong>File Path:</strong> @file.FilePath <br />
+            <strong>Title:</strong> @file.Title <br />
+            <strong>Author:</strong> @file.Author <br />
+            <strong>Creation Date:</strong> @file.CreationDate?.ToString("yyyy-MM-dd") <br />
+            <strong>Number of Pages:</strong> @file.NumberOfPages
+        </li>
+    }
+</ul>
+
+<h2>Files with Missing Metadata:</h2>
+<ul>
+    @foreach (var file in Model.FilesWithMissingMetadata)
+    {
+        <li>@file</li>
+    }
+</ul>
+
+<form asp-controller="PDF" asp-action="DownloadReport" method="post">
+    <button type="submit">Download Report</button>
+</form>
