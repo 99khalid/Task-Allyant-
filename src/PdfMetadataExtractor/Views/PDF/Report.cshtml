@@ -1,0 +1,54 @@
+@model PdfMetadataExtractor.Models.PDFReport
+@{
+    ViewData["Title"] = "PDF Report";
+}
+<h1>PDF Report</h1>
+
+<p><strong>Files processed:</strong> @Model.ProcessedFiles.Count &middot; <strong>Total pages:</strong> @Model.TotalPages</p>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>File</th>
+            <th>Title</th>
+            <th>Author</th>
+            <th>Created</th>
+            <th>Pages</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var file in Model.PdfFiles)
+        {
+            <tr class="@(file.HasMissingMetadata ? "table-warning" : "")">
+                <td>@file.FileName</td>
+                @if (file.Error != null)
+                {
+                    <td colspan="4" class="text-danger">@file.Error</td>
+                }
+                else
+                {
+                    <td>@(file.Title ?? "—")</td>
+                    <td>@(file.Author ?? "—")</td>
+                    <td>@(file.CreationDate?.ToString("yyyy-MM-dd") ?? "—")</td>
+                    <td>@file.NumberOfPages</td>
+                }
+            </tr>
+        }
+    </tbody>
+</table>
+
+@if (Model.FilesWithMissingMetadata.Count > 0)
+{
+    <h2 class="h5">Files with missing metadata</h2>
+    <ul>
+        @foreach (var file in Model.FilesWithMissingMetadata)
+        {
+            <li>@file</li>
+        }
+    </ul>
+}
+
+<form asp-controller="PDF" asp-action="DownloadReport" method="post" class="d-inline">
+    <button type="submit" class="btn btn-secondary">Download JSON report</button>
+</form>
+<a asp-controller="PDF" asp-action="Index" class="btn btn-link">Process more files</a>
